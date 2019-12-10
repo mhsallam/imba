@@ -100,48 +100,6 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
-    name: 'permission',
-    meta: {
-      title: 'Permission',
-      icon: 'lock',
-      roles: ['ROLE_ADMIN', 'ROLE_USER'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'pagePermission',
-        meta: {
-          title: 'Page Permission',
-          roles: ['ROLE_ADMIN'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'Directive Permission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'Role Permission',
-          roles: ['ROLE_ADMIN']
-        }
-      }
-    ]
-  },
-
-  {
     path: '/organisations',
     component: Layout,
     children: [
@@ -149,7 +107,30 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/organisations/index'),
         name: 'organisations',
-        meta: { title: 'Organisations', icon: 'documentation' }
+        meta: { title: 'Organisations', icon: 'company' }
+      }
+    ]
+  },
+  {
+    path: '/settings',
+    component: Layout,
+    redirect: '/settings/users',
+    alwaysShow: true, // will always show the root menu
+    name: 'settings',
+    meta: {
+      title: 'Settings',
+      icon: 'settings'
+    },
+    children: [
+      {
+        path: 'users',
+        component: () => import('@/views/users/index'),
+        name: 'users',
+        meta: {
+          title: 'Users',
+          roles: ['ROLE_ADMIN'], // or you can only set roles in sub nav
+          icon: 'user'
+        }
       }
     ]
   },

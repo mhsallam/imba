@@ -8,10 +8,49 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
+export function refreshToken(token) {
   return request({
-    url: '/user/info',
+    url: '/auth/refresh',
     method: 'get',
     params: { token }
+  })
+}
+
+export function getInfo() {
+  return request({
+    url: '/user/info',
+    method: 'get'
+  })
+}
+
+export function getUsers(query) {
+  query.page = query.page - 1
+  return request({
+    url: '/user',
+    method: 'get',
+    params: query
+  })
+}
+
+export function addUser(data) {
+  return request({
+    url: '/user/add',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUser(data) {
+  return request({
+    url: `/user/update`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteUser(id) {
+  return request({
+    url: `/user/delete/${id}`,
+    method: 'delete'
   })
 }

@@ -3,6 +3,7 @@ package com.mhsallam.imba.services;
 import com.mhsallam.imba.bootstrap.DataBootstraper;
 import com.mhsallam.imba.error.ConflictException;
 import com.mhsallam.imba.error.NotFoundException;
+import com.mhsallam.imba.models.dto.UserDto;
 import com.mhsallam.imba.models.entity.Role;
 import com.mhsallam.imba.models.entity.User;
 import com.mhsallam.imba.repositories.RoleRepository;
@@ -13,6 +14,8 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,6 +44,10 @@ public class UserService implements UserDetailsService {
     @Bean
     private PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override
@@ -64,28 +72,68 @@ public class UserService implements UserDetailsService {
         return authorities;
     }
 
-    public User register(User user, boolean isAdmin) throws ConflictException {
+    public User register(UserDto dto, boolean isEnabled) throws ConflictException {
 
-        User exist = userRepository.findByEmail(user.getUsername());
+        User exist = userRepository.findByEmail(dto.getEmail());
         if (exist != null) {
-            throw new ConflictException("There is an user with that same email: " + user.getUsername());
+            throw new ConflictException("There is a user with that same email: " + dto.getEmail());
         }
 
-        Role userRole = roleRepository.findByName("ROLE_USER");
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        user.setAvatar(dto.getAvatar());
+        user.setCreated(new Date());
+        user.setEnabled(isEnabled);
 
-        logger.info("Adding ROLE_USER..");
+        List<String> dtoRoles = dto.getRoles();
         List<Role> roles = new ArrayList<Role>();
-        roles.add(userRole);
-
-        if(isAdmin) {
-            Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-            logger.info("Adding ROLE_ADMIN..");
-            roles.add(adminRole);
+        if(dtoRoles != null) {
+            dtoRoles.forEach(r -> {
+                Role adminRole = roleRepository.findByName(r);
+                roles.add(adminRole);
+            });
         }
-
         user.setRoles(roles);
         return this.save(user);
     }
+
+
+    public User update(UserDto dto) throws NotFoundException, Exception {
+        if(dto == null) {
+            throw new Exception("Wrong inputs");
+        }
+
+        User user = userRepository.findById(dto.getId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+
+        List<Role> userRoles = new ArrayList<Role>();
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        userRoles.add(userRole);
+        Collection<String> dtoRoles = dto.getRoles();
+        if(dtoRoles != null) {
+            dtoRoles.forEach(r -> {
+                if(r == "ROLE_ADMIN") {
+                    Role adminRole = roleRepository.findByName("ROLE_ADMIN");
+                    userRoles.add(adminRole);
+                }
+            });
+        }
+        user.setRoles(userRoles);
+
+        return userRepository.save(user);
+    }
+
+    public void delete(Long id) throws NotFoundException{
+        User org = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Organisation not found"));
+        userRepository.delete(org);
+    }
+
 
     public String refreshToken(String oldToken) {
         if (oldToken != null && StringUtils.isNotEmpty(oldToken)) {

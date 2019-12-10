@@ -9,20 +9,6 @@
         @keyup.enter.native="handleFilter"
       />
       <el-select
-        v-model="listQuery.type"
-        :placeholder="tr('generic.type', 'Type')"
-        clearable
-        class="filter-item"
-        style="width: 130px"
-      >
-        <el-option
-          v-for="item in orgTypeOptions"
-          :key="item.key"
-          :label="item.key + ': ' + item.displayName"
-          :value="item.key"
-        />
-      </el-select>
-      <el-select
         v-model="listQuery.sort"
         style="width: 140px"
         class="filter-item"
@@ -30,7 +16,7 @@
         @change="handleFilter"
       >
         <el-option
-          v-for="item in sortOptions"
+          v-for="item in roleOptions"
           :key="item.key"
           :label="item.label"
           :value="item.key"
@@ -46,7 +32,6 @@
         {{ tr('generic.search', 'Search') }}
       </el-button>
       <el-button
-        v-if="authorized(['ROLE_ADMIN'])"
         class="filter-item"
         style="margin-left: 10px"
         type="primary"
@@ -94,18 +79,18 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="tr('organisation.acronym', 'Acronym')" align="center" width="95">
+      <el-table-column :label="tr('user.email', 'Email')" align="center" width="95">
         <template slot-scope="{ row }">
-          <span>{{ row.acronym }}</span>
+          <span>{{ row.email }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="tr('generic.type', 'Type')" align="center" width="95">
         <template slot-scope="{ row }">
-          <span>{{ row.type }}</span>
+          <img :src="row.avatar" class="user-avatar">
+          <span>{{ row.avatar }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        v-if="authorized(['ROLE_ADMIN'])"
         label="Actions"
         align="center"
         width="230"
@@ -139,33 +124,11 @@
         label-width="70px"
         style="width: 400px margin-left:50px"
       >
-        <el-form-item :label="tr('generic.type', 'Type')" prop="type">
-          <el-select
-            v-model="temp.type"
-            class="filter-item"
-            :placeholder="tr('generic.pleaseSelect', 'Please Select')"
-          >
-            <el-option
-              v-for="item in orgTypeOptions"
-              :key="item.key"
-              :label="item.displayName"
-              :value="item.key"
-            />
-          </el-select>
-        </el-form-item>
         <el-form-item :label="tr('generic.name', 'Name')" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item :label="tr('organisation.acronym', 'Acronym')" prop="acronym">
-          <el-input v-model="temp.acronym" />
-        </el-form-item>
-        <el-form-item :label="tr('generic.remarks', 'Remarks')">
-          <el-input
-            v-model="temp.remarks"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-            type="textarea"
-            :placeholder="tr('generic.remarks', 'Remarks')"
-          />
+        <el-form-item :label="tr('generic.email', 'Email')" prop="acronym">
+          <el-input v-model="temp.email" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -184,15 +147,14 @@
 </template>
 
 <script>
-import { getOrgs, addOrg, updateOrg, deleteOrg } from '@/api/org'
-// import { getOrgTypes } from '@/api/settings'
+import { getUsers, addUser, updateUser, deleteUser } from '@/api/user'
+// import { getUserTypes } from '@/api/settings'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import checkPermission from '@/utils/permission'
 
 export default {
-  name: 'Organisations',
+  name: 'Useranisations',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -210,7 +172,7 @@ export default {
     return {
       tableKey: 0,
       list: null,
-      orgTypes: [],
+      roleTypes: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -222,24 +184,15 @@ export default {
         type: undefined
       },
       orgTypeOptions: [
-        { key: 'UN', displayName: this.tr('enum.organiationType.un', 'UN') },
-        { key: 'INGO', displayName: this.tr('enum.organiationType.ingo', 'INGO') },
-        { key: 'NNGO', displayName: this.tr('enum.organiationType.nngo', 'NNGO') },
-        { key: 'GOV', displayName: this.tr('enum.organiationType.gov', 'GOV') }
-      ],
-      sortOptions: [
-        { label: this.tr('generic.idAscending', 'ID Ascending'), key: 'id,asc' },
-        { label: this.tr('generic.idDescending', 'ID Descending'), key: 'id,desc' },
-        { label: this.tr('generic.nameAscending', 'Name Ascending'), key: 'name,asc' },
-        { label: this.tr('generic.nameDescending', 'Name Descending'), key: 'name,desc' }
+        { key: 'ROLE_USER', displayName: this.tr('permission.roleUser', 'User') },
+        { key: 'ROLE_ADMIN', displayName: this.tr('permission.roleAdmin', 'Admin') }
       ],
       showReviewer: false,
       temp: {
         id: undefined,
         name: '',
-        acronym: '',
-        type: 'NNGO',
-        remarks: ''
+        email: '',
+        roles: ['ROLE_USER']
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -248,12 +201,7 @@ export default {
         create: 'create'
       },
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
-        ],
-        acronym: [
-          { required: true, message: 'acronym is required', trigger: 'blur' }
-        ],
+        email: [{ required: true, message: 'email is required', trigger: 'blur' }],
         name: [{ required: true, message: 'name is required', trigger: 'blur' }]
       },
       downloadLoading: false
@@ -267,12 +215,9 @@ export default {
       const t = this.$i18n.t(key)
       return t !== key ? t : value
     },
-    authorized(value) {
-      return checkPermission(value)
-    },
     getList() {
       this.listLoading = true
-      getOrgs(this.listQuery).then(response => {
+      getUsers(this.listQuery).then(response => {
         this.list = response.content
         this.total = response.totalElements
         this.page = response.page + 1
@@ -303,9 +248,8 @@ export default {
       this.temp = {
         id: undefined,
         name: '',
-        acronym: '',
-        type: 'NNGO',
-        remarks: ''
+        email: '',
+        roles: ['ROLE_USER']
       }
     },
     handleCreate() {
@@ -319,7 +263,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          addOrg(this.temp).then(() => {
+          addUser(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -344,7 +288,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          updateOrg(tempData).then(() => {
+          updateUser(tempData).then(() => {
             for (const v of this.list) {
               if (v.id === this.temp.id) {
                 const index = this.list.indexOf(v)
@@ -365,12 +309,12 @@ export default {
     },
     handleDelete(row) {
       if (row.id > 0) {
-        this.$confirm('Confirm to remove this organisation?', 'Warning', {
+        this.$confirm('Confirm to remove this user?', 'Warning', {
           confirmButtonText: 'Confirm',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(async() => {
-          deleteOrg(row.id).then(() => {
+          deleteUser(row.id).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Delete Successfully',

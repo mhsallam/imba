@@ -2,10 +2,8 @@ export default {
   route: {
     dashboard: 'Dashboard',
     organisations: 'Organisations',
-    permission: 'Permission',
-    pagePermission: 'Page Permission',
-    rolePermission: 'Role Permission',
-    directivePermission: 'Directive Permission',
+    settings: 'Settings',
+    users: 'Users',
     profile: 'Profile'
   },
   login: {

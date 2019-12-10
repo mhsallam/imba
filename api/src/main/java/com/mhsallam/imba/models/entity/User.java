@@ -29,6 +29,7 @@ public class User implements UserDetails {
     private Date created;
 
     private String avatar;
+
     private boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER)

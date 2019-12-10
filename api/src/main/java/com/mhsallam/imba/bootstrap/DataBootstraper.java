@@ -1,16 +1,23 @@
 package com.mhsallam.imba.bootstrap;
 
 import com.mhsallam.imba.error.ConflictException;
-import com.mhsallam.imba.models.entity.*;
+import com.mhsallam.imba.models.dto.UserDto;
+import com.mhsallam.imba.models.entity.Admin1;
+import com.mhsallam.imba.models.entity.Admin2;
+import com.mhsallam.imba.models.entity.Org;
+import com.mhsallam.imba.models.entity.Role;
 import com.mhsallam.imba.repositories.RoleRepository;
 import com.mhsallam.imba.services.AdminAreasService;
-import com.mhsallam.imba.services.OrganisationService;
+import com.mhsallam.imba.services.OrgService;
 import com.mhsallam.imba.services.UserService;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class DataBootstraper implements CommandLineRunner {
@@ -27,7 +34,7 @@ public class DataBootstraper implements CommandLineRunner {
     AdminAreasService adminAreasService;
 
     @Autowired
-    OrganisationService organisationService;
+    OrgService orgService;
 
     @Override
     public void run(String... strings) throws Exception {
@@ -37,25 +44,25 @@ public class DataBootstraper implements CommandLineRunner {
     }
 
     private void bootstrapOrganisations() throws Exception {
-        organisationService.create(new Org("Save the Children", "SCI", "INGO"));
-        organisationService.create(new Org("Al-hikma Al-yamania Association for Charity", "HYAC", "NNGO"));
-        organisationService.create(new Org("Governorate Health Office", "GHO", "GOV"));
-        organisationService.create(new Org("International Organization for Migration", "IOM", "UN"));
-        organisationService.create(new Org("Intersos - Humanitarian Aid Organization", "INTERSOS", "INGO"));
-        organisationService.create(new Org("Danish Refugee Council", "DRC", "INGO"));
-        organisationService.create(new Org("Family Counseling and Development Foundation", "FCDF", "NNGO"));
-        organisationService.create(new Org("Ministry of Social Affairs & Labour", "MOSAL", "GOV"));
-        organisationService.create(new Org("Office of the United Nations High Commissioner for Human Rights", "OHCHR", "UN"));
-        organisationService.create(new Org("Yemen Women Union", "YWU", "NNGO"));
-        organisationService.create(new Org("Yemen Executive Mine Action Center", "YEMAC", "NNGO"));
-        organisationService.create(new Org("Social Fund for Development", "SFD", "NNGO"));
-        organisationService.create(new Org("Oxford Committee for Famine Relief GB", "OXFAM", "INGO"));
-        organisationService.create(new Org("United Nations High Commissioner for Refugees", "UNHCR", "UN"));
-        organisationService.create(new Org("Nahda Makers Organization", "NMO", "NNGO"));
-        organisationService.create(new Org("Relief International", "RI", "INGO"));
-        organisationService.create(new Org("World Health Organization", "WHO", "UN"));
-        organisationService.create(new Org("Public Works Project", "PWP", "NNGO"));
-        organisationService.create(new Org("Action Contre La Faim (Action Against Hunger) - France", "ACF-F", "INGO"));
+        orgService.create(new Org("Save the Children", "SCI", "INGO"));
+        orgService.create(new Org("Al-hikma Al-yamania Association for Charity", "HYAC", "NNGO"));
+        orgService.create(new Org("Governorate Health Office", "GHO", "GOV"));
+        orgService.create(new Org("International Organization for Migration", "IOM", "UN"));
+        orgService.create(new Org("Intersos - Humanitarian Aid Organization", "INTERSOS", "INGO"));
+        orgService.create(new Org("Danish Refugee Council", "DRC", "INGO"));
+        orgService.create(new Org("Family Counseling and Development Foundation", "FCDF", "NNGO"));
+        orgService.create(new Org("Ministry of Social Affairs & Labour", "MOSAL", "GOV"));
+        orgService.create(new Org("Office of the United Nations High Commissioner for Human Rights", "OHCHR", "UN"));
+        orgService.create(new Org("Yemen Women Union", "YWU", "NNGO"));
+        orgService.create(new Org("Yemen Executive Mine Action Center", "YEMAC", "NNGO"));
+        orgService.create(new Org("Social Fund for Development", "SFD", "NNGO"));
+        orgService.create(new Org("Oxford Committee for Famine Relief GB", "OXFAM", "INGO"));
+        orgService.create(new Org("United Nations High Commissioner for Refugees", "UNHCR", "UN"));
+        orgService.create(new Org("Nahda Makers Organization", "NMO", "NNGO"));
+        orgService.create(new Org("Relief International", "RI", "INGO"));
+        orgService.create(new Org("World Health Organization", "WHO", "UN"));
+        orgService.create(new Org("Public Works Project", "PWP", "NNGO"));
+        orgService.create(new Org("Action Contre La Faim (Action Against Hunger) - France", "ACF-F", "INGO"));
     }
 
     private void bootstrapGeoAdmins() throws ConflictException, Exception {
@@ -429,16 +436,21 @@ public class DataBootstraper implements CommandLineRunner {
             logger.info("Seeding initial users data..");
 
             logger.info("Seeding Administrator..");
-            User admin = new User("admin@immap.org", "administrator", "Administrator");
+            UserDto admin = new UserDto("admin@immap.org", "administrator", "Administrator");
             admin.setAvatar("/avatars/admin.png");
-            admin.setEnabled(true);
+            List<String> adminRoles = new ArrayList<>();
+            adminRoles.add("ROLE_USER");
+            adminRoles.add("ROLE_ADMIN");
+            admin.setRoles(adminRoles);
             userService.register(admin, true);
 
             logger.info("Seeding Mohammed Sallam..");
-            User user = new User("user@immap.org", "password", "Mohammed Sallam");
+            UserDto user = new UserDto("user@immap.org", "password", "Mohammed Sallam");
             user.setAvatar("/avatars/user.png");
-            user.setEnabled(true);
-            userService.register(user, false);
+            List<String> userRoles = new ArrayList<>();
+            userRoles.add("ROLE_USER");
+            user.setRoles(userRoles);
+            userService.register(user, true);
         }
     }
 

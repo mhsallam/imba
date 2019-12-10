@@ -1,15 +1,13 @@
 export default {
   route: {
-    dashboard: 'الوحة الرئيسية',
+    dashboard: 'اللوحة الرئيسية',
     organisations: 'المنظمات',
-    permission: 'الصلاحيات',
-    pagePermission: 'صلاحيات الصفحة',
-    rolePermission: 'صلاحيات الدور',
-    directivePermission: 'صلاحيات التوجيه',
+    settings: 'الإعدادات',
+    users: 'المستحدمين',
     profile: 'بيانات المسختدم'
   },
   navbar: {
-    dashboard: 'لوحة القيادة',
+    dashboard: 'اللوحة الرئيسية',
     logOut: 'الخروج',
     profile: 'بيانات المسختدم',
     size: 'حجم الخط'
