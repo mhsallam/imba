@@ -1,6 +1,6 @@
 package com.mhsallam.imba.controllers;
 
-import com.mhsallam.imba.common.AppEnumProperties;
+import com.mhsallam.imba.util.EnumPropUtil;
 import com.mhsallam.imba.models.entity.Admin1;
 import com.mhsallam.imba.models.entity.Admin2;
 import com.mhsallam.imba.services.AdminAreasService;
@@ -17,20 +17,20 @@ import java.util.Map;
 public class SettingsController {
 
     @Autowired
-    private AppEnumProperties appEnumProperties;
+    private EnumPropUtil enumPropUtil;
 
     @Autowired
     private AdminAreasService adminAreasService;
 
     @GetMapping(value = "/types/org")
     public ResponseEntity<Map<String, Integer>> getOrganisationTypes() {
-        Map<String, Integer> result = appEnumProperties.getOrganisationTypes();
+        Map<String, Integer> result = enumPropUtil.getOrganisationTypes();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value = "/types/identity")
     public ResponseEntity<Map<String, Integer>> getIdentityTypes() {
-        Map<String, Integer> result = appEnumProperties.getIdentityTypes();
+        Map<String, Integer> result = enumPropUtil.getIdentityTypes();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

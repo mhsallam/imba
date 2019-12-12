@@ -1,4 +1,4 @@
-package com.mhsallam.imba.common;
+package com.mhsallam.imba.util;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,7 +7,7 @@ import java.util.Map;
 
 @ConfigurationProperties(prefix = "enums")
 @Getter
-public class AppEnumProperties {
+public class EnumPropUtil {
     private Map<String, Integer> organisationTypes;
     private Map<String, Integer> identityTypes;
 

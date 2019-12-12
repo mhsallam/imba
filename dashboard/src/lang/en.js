@@ -41,6 +41,10 @@ export default {
     nameDescending: 'Name Descending',
     globalSize: 'Global Size'
   },
+  permission: {
+    roleUser: 'User',
+    roleAdmin:'Admin'
+  },
   enum: {
     organiationType: {
       un: 'UN',
@@ -49,7 +53,7 @@ export default {
       gov: 'GOV'
     },
     globalSize: {
-      sefault: 'Default',
+      default: 'Default',
       medium: 'Medium',
       small: 'Small',
       mini: 'Mini'
@@ -58,14 +62,8 @@ export default {
   organisation: {
     acronym: 'Acronym'
   },
-  permission: {
-    addRole: 'New Role',
-    editPermission: 'Edit',
-    roles: 'Your roles',
-    switchRoles: 'Switch roles',
-    tips: 'In some cases, using v-permission will have no effect. For example: Element-UI  el-tab or el-table-column and other scenes that dynamically render dom. You can only do this with v-if.',
-    delete: 'Delete',
-    confirm: 'Confirm',
-    cancel: 'Cancel'
+  user: {
+    email: 'email',
+    avatar: 'Avatar'
   }
 }

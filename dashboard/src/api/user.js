@@ -24,7 +24,6 @@ export function getInfo() {
 }
 
 export function getUsers(query) {
-  query.page = query.page - 1
   return request({
     url: '/user',
     method: 'get',

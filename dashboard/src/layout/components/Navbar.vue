@@ -30,9 +30,9 @@
           <router-link to="/profile/index">
             <el-dropdown-item>{{ tr('route.profile', 'Profile') }}</el-dropdown-item>
           </router-link>
-          <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>{{ tr('route.dashboard', 'Dashboard') }}</el-dropdown-item>
-          </router-link>
+          </router-link> -->
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ tr('login.logOut', 'Log Out') }}</span>
           </el-dropdown-item>

@@ -214,7 +214,7 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        page: 1,
+        page: 0,
         size: 10,
         sort: 'id,asc',
         name: undefined,
@@ -272,15 +272,18 @@ export default {
     },
     getList() {
       this.listLoading = true
-      getOrgs(this.listQuery).then(response => {
+      const query = Object.assign({}, this.listQuery);
+      query.page = query.page - 1 < 0 ? 0 : query.page - 1
+      console.log(query)
+      getOrgs(query).then(response => {
         this.list = response.content
         this.total = response.totalElements
-        this.page = response.page + 1
+        this.page = response.number
 
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {

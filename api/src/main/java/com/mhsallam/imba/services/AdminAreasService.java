@@ -1,6 +1,6 @@
 package com.mhsallam.imba.services;
 
-import com.mhsallam.imba.common.AppEnumProperties;
+import com.mhsallam.imba.util.EnumPropUtil;
 import com.mhsallam.imba.error.ConflictException;
 import com.mhsallam.imba.models.entity.Admin1;
 import com.mhsallam.imba.models.entity.Admin2;
@@ -22,7 +22,7 @@ public class AdminAreasService {
     @Autowired
     private Admin2Repository admin2Repository;
     @Autowired
-    private AppEnumProperties appEnumProperties;
+    private EnumPropUtil enumPropUtil;
 
     public Admin1 findAdmin1ByName(String name) {
         return admin1Repository.findByName(name);

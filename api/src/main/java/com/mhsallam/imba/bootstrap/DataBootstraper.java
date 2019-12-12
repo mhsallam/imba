@@ -436,7 +436,8 @@ public class DataBootstraper implements CommandLineRunner {
             logger.info("Seeding initial users data..");
 
             logger.info("Seeding Administrator..");
-            UserDto admin = new UserDto("admin@immap.org", "administrator", "Administrator");
+            UserDto admin = new UserDto("admin@immap.org", "Administrator");
+            admin.setPassword("administrator");
             admin.setAvatar("/avatars/admin.png");
             List<String> adminRoles = new ArrayList<>();
             adminRoles.add("ROLE_USER");
@@ -445,7 +446,8 @@ public class DataBootstraper implements CommandLineRunner {
             userService.register(admin, true);
 
             logger.info("Seeding Mohammed Sallam..");
-            UserDto user = new UserDto("user@immap.org", "password", "Mohammed Sallam");
+            UserDto user = new UserDto("user@immap.org", "Mohammed Sallam");
+            user.setPassword("password");
             user.setAvatar("/avatars/user.png");
             List<String> userRoles = new ArrayList<>();
             userRoles.add("ROLE_USER");

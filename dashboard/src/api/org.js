@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
 export function getOrgs(query) {
-  query.page = query.page - 1
   return request({
     url: '/org',
     method: 'get',

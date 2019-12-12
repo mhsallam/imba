@@ -16,7 +16,7 @@
         @change="handleFilter"
       >
         <el-option
-          v-for="item in roleOptions"
+          v-for="item in sortOptions"
           :key="item.key"
           :label="item.label"
           :value="item.key"
@@ -74,6 +74,11 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
+      <el-table-column :label="tr('user.avatar', 'Avatar')" align="center" width="95">
+        <template slot-scope="{ row }">
+          <img :src="row.avatar" width="40" class="user-avatar">
+        </template>
+      </el-table-column>
       <el-table-column :label="tr('generic.name', 'Name')" min-width="150px" align="left">
         <template slot-scope="{ row }">
           <span>{{ row.name }}</span>
@@ -82,12 +87,6 @@
       <el-table-column :label="tr('user.email', 'Email')" align="center" width="95">
         <template slot-scope="{ row }">
           <span>{{ row.email }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="tr('generic.type', 'Type')" align="center" width="95">
-        <template slot-scope="{ row }">
-          <img :src="row.avatar" class="user-avatar">
-          <span>{{ row.avatar }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -127,7 +126,7 @@
         <el-form-item :label="tr('generic.name', 'Name')" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item :label="tr('generic.email', 'Email')" prop="acronym">
+        <el-form-item :label="tr('user.email', 'Email')" prop="acronym">
           <el-input v-model="temp.email" />
         </el-form-item>
       </el-form>
@@ -176,16 +175,20 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        page: 1,
+        page: 0,
         size: 10,
         sort: 'id,asc',
-        name: undefined,
-        acronym: undefined,
-        type: undefined
+        name: undefined
       },
-      orgTypeOptions: [
+      roleOptions: [
         { key: 'ROLE_USER', displayName: this.tr('permission.roleUser', 'User') },
         { key: 'ROLE_ADMIN', displayName: this.tr('permission.roleAdmin', 'Admin') }
+      ],
+      sortOptions: [
+        { label: this.tr('generic.idAscending', 'ID Ascending'), key: 'id,asc' },
+        { label: this.tr('generic.idDescending', 'ID Descending'), key: 'id,desc' },
+        { label: this.tr('generic.nameAscending', 'Name Ascending'), key: 'name,asc' },
+        { label: this.tr('generic.nameDescending', 'Name Descending'), key: 'name,desc' }
       ],
       showReviewer: false,
       temp: {
@@ -217,15 +220,17 @@ export default {
     },
     getList() {
       this.listLoading = true
-      getUsers(this.listQuery).then(response => {
+      const query = Object.assign({}, this.listQuery);
+      query.page = query.page - 1 < 0 ? 0 : query.page - 1
+      getUsers(query).then(response => {
         this.list = response.content
         this.total = response.totalElements
-        this.page = response.page + 1
+        this.page = response.number
 
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {
@@ -240,6 +245,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
+      console.log(data)
       const { prop, order } = data
       this.listQuery.sort = `${prop},${order === 'ascending' ? 'asc' : 'desc'}`
       this.handleFilter()

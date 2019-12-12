@@ -17,9 +17,8 @@ public class UserDto {
     private String avatar;
     private List<String> roles;
 
-    public UserDto(String email, String password, String name) {
+    public UserDto(String email, String name) {
         this.email = email;
-        this.password = password;
         this.name = name;
     }
 }

@@ -1,6 +1,6 @@
 package com.mhsallam.imba.controllers;
 
-import com.mhsallam.imba.common.AppEnumProperties;
+import com.mhsallam.imba.util.EnumPropUtil;
 import com.mhsallam.imba.error.ConflictException;
 import com.mhsallam.imba.error.NotFoundException;
 import com.mhsallam.imba.models.entity.Org;
@@ -21,7 +21,7 @@ public class OrgController {
     private OrgService orgService;
 
     @Autowired
-    private AppEnumProperties appEnumProperties;
+    private EnumPropUtil enumPropUtil;
 
     @PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
     @GetMapping({"", "/list"})

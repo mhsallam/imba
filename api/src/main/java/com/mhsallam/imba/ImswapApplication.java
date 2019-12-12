@@ -1,12 +1,12 @@
 package com.mhsallam.imba;
 
-import com.mhsallam.imba.common.AppEnumProperties;
+import com.mhsallam.imba.util.EnumPropUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
-@EnableConfigurationProperties(value = AppEnumProperties.class)
+@EnableConfigurationProperties(value = EnumPropUtil.class)
 @SpringBootApplication
 @ComponentScan
 public class ImswapApplication {
